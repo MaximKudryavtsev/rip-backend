@@ -1,3 +1,3 @@
 export const DBConfig = {
-    URL: "mongodb://localhost:27017/rip"
+    URL: "mongodb+srv://lena:qwerty123@cluster0-1nnlm.mongodb.net/test?retryWrites=true"
 };

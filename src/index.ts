@@ -3,10 +3,14 @@ import * as http from "http";
 import * as bodyParser from "body-parser";
 import { NextFunction, Request, Response } from "express";
 import * as dotenv from "dotenv";
+import { DataBase } from "./service";
 
 const app = express();
 const server = http.createServer(app);
 const jsonParser = bodyParser.urlencoded({extended: false});
+const database = new DataBase();
+
+database.connect();
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
