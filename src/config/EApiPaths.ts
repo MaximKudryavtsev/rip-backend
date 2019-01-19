@@ -3,4 +3,6 @@ export enum EApiPaths {
     USER = "/user",
     EMAIL = "/email",
     LOGIN = "/login",
+    CODE = "/code",
+    PASSWORD = "/password",
 }

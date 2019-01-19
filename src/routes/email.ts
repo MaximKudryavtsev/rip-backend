@@ -18,4 +18,13 @@ router.get(Actions.CHECK, async (request: Request, response: Response) => {
     await controller.checkEmailExist(request.params, response);
 });
 
+router.put(Actions.CHANGE, (async (req: Request, res: Response) => {
+    if (!req.body) {
+        return res.status(EHTTPStatus.NOT_FOUND);
+    }
+    const token = req.body.token;
+    const email = req.body.email;
+    await controller.changeEmail(token, email, res);
+}));
+
 export const email = router;

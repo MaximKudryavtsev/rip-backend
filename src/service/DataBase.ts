@@ -4,7 +4,9 @@ import { DBConfig } from "../config";
 
 export enum EModels {
     USERS = "users",
-    CATEGORIES = "categories"
+    CATEGORIES = "categories",
+    COMMENTS = "comments",
+    RECIPES = "recipes"
 }
 
 export class DataBase {

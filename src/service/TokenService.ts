@@ -4,8 +4,8 @@ import { get } from "lodash";
 import * as CryptoJS from "crypto-js";
 
 export class TokenService {
-    private readonly secret = process.env.TOKEN_SECRET;
-    private readonly algorithm = process.env.TOKEN_ALGORITHM;
+    private readonly secret = "=mqDLjywdMBmvsKx5S8z9GbVuNyZkkzPABZfeD5qtSe8rYjm2BsvtZafEUMPdmkhj";
+    private readonly algorithm = "HS256";
     private token = "";
 
     setToken(data: ITokenData): void {
@@ -28,11 +28,11 @@ export class TokenService {
     }
 
     private cryptToken(token: string): string {
-        return CryptoJS.AES.encrypt(token, process.env.SECRET_TOKEN).toString();
+        return CryptoJS.AES.encrypt(token, process.env.CRYPT_TOKEN_SECREY).toString();
     }
 
     private decryptToken(cryptedToken: string): string {
-        const bytes = CryptoJS.AES.decrypt(cryptedToken, process.env.SECRET_TOKEN);
+        const bytes = CryptoJS.AES.decrypt(cryptedToken, process.env.CRYPT_TOKEN_SECREY);
         return bytes.toString(CryptoJS.enc.Utf8);
     }
 }

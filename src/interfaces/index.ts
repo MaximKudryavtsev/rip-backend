@@ -6,3 +6,6 @@ export { IUserData } from "./IUserData";
 export { IGettingUserData } from "./IGettingUserData";
 export { ICheckEmail } from "./ICheckEmail";
 export { ICheckLogin } from "./ICheckLogin";
+export { ILoginData } from "./ILoginData";
+export { IConfirmationData } from "./IConfirmationData";
+export { IChangePassword } from "./IChangePassword";

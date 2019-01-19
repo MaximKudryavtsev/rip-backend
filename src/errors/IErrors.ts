@@ -7,7 +7,7 @@ export interface IErrors {
     PasswordInvalid: APIError;
     PasswordAreNotEquals: APIError;
     UserWithThisEmailNotRegistered: APIError;
-    WrongPassword: APIError;
+    WrongData: APIError;
     UserNotConfirmed: APIError;
     EnteredCurrentLogin: APIError;
     EnteredCurrentEmail: APIError;
@@ -15,9 +15,5 @@ export interface IErrors {
     EnteredCurrentPassword: APIError;
     NotYourEmail: APIError;
     WrongCommendId: APIError;
-    DiaryAlreadyExist: APIError;
-    NotYourDiary: APIError;
-    DiaryNotExist: APIError;
-    RecordAlreadyExist: APIError;
-    RecordNotExist: APIError;
+    WrongToken: APIError;
 }
