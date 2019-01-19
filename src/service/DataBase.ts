@@ -2,6 +2,11 @@ import * as mongoose from "mongoose";
 import { Connection, Model, Schema, Document } from "mongoose";
 import { DBConfig } from "../config";
 
+export enum EModels {
+    USERS = "rip.users",
+    CATEGORIES = "categories"
+}
+
 export class DataBase {
     connect(): void {
         this.getConnection().once("open", () => {

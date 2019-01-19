@@ -4,13 +4,18 @@ import * as bodyParser from "body-parser";
 import { NextFunction, Request, Response } from "express";
 import * as dotenv from "dotenv";
 import { DataBase } from "./service";
+import { Redis } from "./service/Redis";
+import { EApiPaths } from "./config";
+import { category } from "./routes";
 
 const app = express();
 const server = http.createServer(app);
 const jsonParser = bodyParser.urlencoded({extended: false});
 const database = new DataBase();
+const redis = new Redis();
 
 database.connect();
+redis.connect();
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -21,6 +26,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 dotenv.config({path: ".env"});
 app.use(jsonParser);
+app.use(EApiPaths.CATEGORY, category);
 
 server.listen(process.env.PORT, () => {
     console.log("Server connected on", process.env.PORT);
