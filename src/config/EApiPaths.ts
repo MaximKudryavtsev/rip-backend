@@ -1,3 +1,6 @@
 export enum EApiPaths {
-    CATEGORY = "/category"
+    CATEGORY = "/category",
+    USER = "/user",
+    EMAIL = "/email",
+    LOGIN = "/login",
 }

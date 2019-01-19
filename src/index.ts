@@ -6,7 +6,9 @@ import * as dotenv from "dotenv";
 import { DataBase } from "./service";
 import { Redis } from "./service/Redis";
 import { EApiPaths } from "./config";
-import { category } from "./routes";
+import { category, user } from "./routes";
+import { email } from "./routes/email";
+import { login } from "./routes/login";
 
 const app = express();
 const server = http.createServer(app);
@@ -27,6 +29,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 dotenv.config({path: ".env"});
 app.use(jsonParser);
 app.use(EApiPaths.CATEGORY, category);
+app.use(EApiPaths.USER, user);
+app.use(EApiPaths.EMAIL, email);
+app.use(EApiPaths.LOGIN, login);
 
 server.listen(process.env.PORT, () => {
     console.log("Server connected on", process.env.PORT);

@@ -14,11 +14,10 @@ export class CategoryController extends Controller {
         const cached = JSON.parse(await this.redis.get(ERedisKeys.CATEGORIES));
         if (isEmpty(cached) || isNil(cached)) {
             const categories = await this.categoryModel.find();
-            console.log(categories);
             await this.redis.set(ERedisKeys.CATEGORIES, categories);
-            response.json(this.getSuccesMessage(categories));
+            response.json(this.getSuccessMessage(categories));
         } else {
-            response.json(this.getSuccesMessage(cached));
+            response.json(this.getSuccessMessage(cached));
         }
     }
 }

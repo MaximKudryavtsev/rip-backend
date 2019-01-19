@@ -3,7 +3,7 @@ import { Connection, Model, Schema, Document } from "mongoose";
 import { DBConfig } from "../config";
 
 export enum EModels {
-    USERS = "rip.users",
+    USERS = "users",
     CATEGORIES = "categories"
 }
 
