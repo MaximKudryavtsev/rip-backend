@@ -1,3 +1,5 @@
+import { uploadPaths } from "../config/UploadPaths";
+
 export const isPasswordsEquals = (password: string, repeatPassword: string): boolean => {
     return password === repeatPassword;
 };
@@ -16,5 +18,5 @@ export const parseResponse = (data: object) => {
 };
 
 export const getAvatarLink = (id: string, name: string): string => {
-    return `${process.env.IMAGE_STORAGE}/avatar/${id}/${name}`;
+    return `${process.env.HOST}/avatars/${id}/${name}`;
 };

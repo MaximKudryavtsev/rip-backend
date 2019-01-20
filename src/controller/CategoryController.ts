@@ -1,13 +1,12 @@
-import { DataBase, EModels } from "../service";
-import { ERedisKeys, Redis } from "../service/Redis";
+import { EModels } from "../service";
+import { ERedisKeys } from "../service/Redis";
 import { CategorySchema } from "../schemas";
 import { isEmpty, isNil } from "lodash";
 import { Response } from "express";
 import { Controller } from "./Controller";
+import { ICategoryController } from "../interfaces";
 
-export class CategoryController extends Controller {
-    private readonly database = new DataBase();
-    private readonly redis = new Redis();
+export class CategoryController extends Controller implements ICategoryController {
     private readonly categoryModel = this.database.getModel(EModels.CATEGORIES, CategorySchema, EModels.CATEGORIES);
 
     async getCategories(response: Response): Promise<void> {

@@ -22,9 +22,7 @@ router.put(Actions.CHANGE, (async (req: Request, res: Response) => {
     if (!req.body) {
         return res.status(EHTTPStatus.NOT_FOUND);
     }
-    const token = req.body.token;
-    const email = req.body.email;
-    await controller.changeEmail(token, email, res);
+    await controller.changeEmail(req.body, res);
 }));
 
 export const email = router;

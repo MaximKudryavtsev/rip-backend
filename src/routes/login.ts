@@ -22,9 +22,7 @@ router.put(Actions.CHANGE, (async (req: Request, res: Response) => {
     if (!req.body) {
         return res.status(EHTTPStatus.NOT_FOUND);
     }
-    const token = req.body.token;
-    const login = req.body.login;
-    await controller.changeLogin(token, login, res);
+    await controller.changeLogin(req.body, res);
 }));
 
 export const login = router;

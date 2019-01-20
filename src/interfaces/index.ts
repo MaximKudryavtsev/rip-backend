@@ -9,3 +9,6 @@ export { ICheckLogin } from "./ICheckLogin";
 export { ILoginData } from "./ILoginData";
 export { IConfirmationData } from "./IConfirmationData";
 export { IChangePassword } from "./IChangePassword";
+export { ICategoryController } from "./ICategoryController";
+export { IChangeLogin } from "./IChangeLogin";
+export { IUploadAvatarData } from "./IUploadAvatarData";

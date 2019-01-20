@@ -28,11 +28,11 @@ export class TokenService {
     }
 
     private cryptToken(token: string): string {
-        return CryptoJS.AES.encrypt(token, process.env.CRYPT_TOKEN_SECREY).toString();
+        return CryptoJS.AES.encrypt(token, process.env.CRYPT_TOKEN_SECRET).toString();
     }
 
     private decryptToken(cryptedToken: string): string {
-        const bytes = CryptoJS.AES.decrypt(cryptedToken, process.env.CRYPT_TOKEN_SECREY);
+        const bytes = CryptoJS.AES.decrypt(cryptedToken, process.env.CRYPT_TOKEN_SECRET);
         return bytes.toString(CryptoJS.enc.Utf8);
     }
 }

@@ -1,26 +1,24 @@
 import { Controller } from "./Controller";
-import { IChangePassword, ICheckEmail, ICheckLogin, IConfirmationData, IGettingUserData, ILoginData, IUserData } from "../interfaces";
+import { IChangeLogin, IChangePassword, ICheckEmail, ICheckLogin, IConfirmationData, IGettingUserData, ILoginData, IUserData } from "../interfaces";
 import { getAvatarLink, isPasswordsValid } from "../helpers";
 import { errorList } from "../errors";
-import { Response } from "express";
+import { Response, Request } from "express";
 import { User } from "../models/User";
 import { Sender } from "../service/Sender";
-import { DataBase, EModels } from "../service";
+import { EModels } from "../service";
 import { UserSchema } from "../schemas";
 import { get } from "lodash";
-import { TokenService } from "../service/TokenService";
+import { IUserController } from "../interfaces/IUserController";
+import { IChangeEmail } from "../interfaces/IChangeEmail";
 
-export class UserController extends Controller {
+export class UserController extends Controller implements IUserController {
     private readonly user = new User();
     private readonly sender = new Sender();
-    private readonly database = new DataBase();
     private readonly userModel = this.database.getModel(EModels.USERS, UserSchema);
-    private readonly tokenService = new TokenService();
 
     async registerUser(inputData: IGettingUserData, response: Response): Promise<void> {
         if (!isPasswordsValid(inputData.password, inputData.repeatPassword)) {
-            const error = errorList.PasswordAreNotEquals;
-            response.send(error.getError());
+            response.json(this.getErrorMessage(errorList.PasswordAreNotEquals));
         } else {
             this.user.setInitUser(inputData);
             const data: IUserData = this.user.getInitUser();
@@ -74,7 +72,7 @@ export class UserController extends Controller {
         }
     }
 
-    async resendCode(email: string, response: Response) {
+    async resendCode(email: string, response: Response): Promise<void> {
         const user = await this.userModel.findOne({email});
         if (user) {
             const login = get(user, "login");
@@ -89,7 +87,7 @@ export class UserController extends Controller {
         }
     }
 
-    async confirmationCode(data: IConfirmationData, res: Response) {
+    async confirmationCode(data: IConfirmationData, res: Response): Promise<void> {
         const oldData: IConfirmationData = {login: data.login, activationCode: data.activationCode};
         const newData: IConfirmationData = {login: data.login, activationCode: ""};
         return this.userModel.findOneAndUpdate(oldData, newData).then((response) => {
@@ -101,7 +99,7 @@ export class UserController extends Controller {
         });
     }
 
-    async getUser(token: string, response: Response) {
+    async getUser(token: string, response: Response): Promise<void> {
         const userId = this.tokenService.getUserIdByToken(token);
         const data = await this.userModel.findById(userId);
         if (data) {
@@ -110,8 +108,7 @@ export class UserController extends Controller {
                 avatar = "";
             } else {
                 const id = get(data, "_id");
-                const name = get(data, "avatar");
-                avatar = getAvatarLink(id, name);
+                avatar = getAvatarLink(id, avatar);
             }
             const user =  {
                 _id: get(data, "_id"),
@@ -126,43 +123,43 @@ export class UserController extends Controller {
         }
     }
 
-    async changeLogin(token: string, login: string, res: Response) {
-        const isLoginExist = await this.userModel.findOne({login});
-        const userId = this.tokenService.getUserIdByToken(token);
+    async changeLogin(data: IChangeLogin, res: Response): Promise<void> {
+        const isLoginExist = await this.userModel.findOne({login: data.login});
+        const userId = this.tokenService.getUserIdByToken(data.token);
         const currentLoginResponse = await this.userModel.findById(userId);
         const currentLogin = get(currentLoginResponse, "login");
-        if (currentLogin === login) {
+        if (currentLogin === data.login) {
             res.json(this.getErrorMessage(errorList.EnteredCurrentLogin));
         } else if (isLoginExist) {
             res.json(this.getErrorMessage(errorList.UserWithThisLoginAlreadyExist));
         } else {
-            const updateUser = await this.userModel.findByIdAndUpdate(userId, {login});
+            const updateUser = await this.userModel.findByIdAndUpdate(userId, {login: data.login});
             if (updateUser) {
                 res.json(this.getSuccessMessage());
             }
         }
     }
 
-    async changeEmail(token: string, email: string, res: Response) {
-        const isEmailExist = await this.userModel.findOne({email});
-        const userId = this.tokenService.getUserIdByToken(token);
+    async changeEmail(data: IChangeEmail, res: Response): Promise<void> {
+        const isEmailExist = await this.userModel.findOne({email: data.email});
+        const userId = this.tokenService.getUserIdByToken(data.token);
         const user = await this.userModel.findById(userId);
         const currentEmail = get(user, "email");
         const login = get(user, "login");
-        if (currentEmail === email) {
+        if (currentEmail === data.email) {
             res.json(this.getErrorMessage(errorList.EnteredCurrentEmail));
         } else if (isEmailExist) {
             res.json(this.getErrorMessage(errorList.UserWithThisEmailAlreadyExist));
         } else {
             res.json(this.getSuccessMessage());
             const code = this.user.getActivationCode();
-            await this.userModel.findByIdAndUpdate(userId, {activationCode: code, email});
-            this.sender.setEmail(email);
+            await this.userModel.findByIdAndUpdate(userId, {activationCode: code, email: data.email});
+            this.sender.setEmail(data.email);
             this.sender.sendConfirmationLink(code, login);
         }
     }
 
-    async changePassword(data: IChangePassword, res: Response) {
+    async changePassword(data: IChangePassword, res: Response): Promise<void> {
         const userId = this.tokenService.getUserIdByToken(data.token);
         const user = await this.userModel.findById(userId);
         const currentPassword = get(user, "password");
@@ -179,7 +176,7 @@ export class UserController extends Controller {
         }
     }
 
-    async forgotPassword(email: string, res: Response) {
+    async forgotPassword(email: string, res: Response): Promise<void> {
         const user = await this.userModel.findOne({email});
         if (!user) {
             res.json(this.getErrorMessage(errorList.UserWithThisEmailNotRegistered));
@@ -192,5 +189,16 @@ export class UserController extends Controller {
             this.sender.sendNewPassword(login, newPassword);
             res.json(this.getSuccessMessage());
         }
+    }
+
+    async uploadAvatar(request: Request, response: Response): Promise<void> {
+        this.fileService.uploadAvatar(request, response);
+    }
+
+    async deleteAvatar(token: string, response: Response): Promise<void> {
+        const userId = this.tokenService.getUserIdByToken(token);
+        await this.fileService.deleteAvatar(userId, response);
+        await this.userModel.findByIdAndUpdate(userId, {avatar: ""});
+        response.json(this.getSuccessMessage());
     }
 }

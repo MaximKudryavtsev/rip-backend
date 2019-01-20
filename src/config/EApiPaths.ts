@@ -5,4 +5,5 @@ export enum EApiPaths {
     LOGIN = "/login",
     CODE = "/code",
     PASSWORD = "/password",
+    AVATAR = "/avatar",
 }

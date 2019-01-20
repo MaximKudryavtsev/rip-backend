@@ -3,3 +3,4 @@ export { user } from "./user";
 export { login } from "./login";
 export { email } from "./email";
 export { code } from "./code";
+export { password } from "./password";
