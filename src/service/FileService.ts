@@ -10,11 +10,13 @@ import { UserSchema } from "../schemas";
 import { TokenService } from "./TokenService";
 import * as uuid from "uuid";
 import { uploadPaths } from "../config/UploadPaths";
+import { RecipeSchema } from "../schemas/RecipeSchema";
 
 export class FileService {
     private static readonly mediaString = `${path.resolve()}/media`;
     private readonly database = new DataBase();
     private readonly userModel = this.database.getModel(EModels.USERS, UserSchema);
+    private readonly recipeModel = this.database.getModel(EModels.RECIPES, RecipeSchema);
     private readonly tokenService = new TokenService();
 
     static createFolder(name: string, type: string): void {
@@ -23,7 +25,7 @@ export class FileService {
 
     static deleteFolder(name: string, type: string): void {
         const pathname = `${FileService.mediaString}/${type}/${name}`;
-        if (fs.existsSync(pathname)) {
+        if (!fs.existsSync(pathname)) {
             return;
         }
         rimraf.sync(pathname);
@@ -46,6 +48,33 @@ export class FileService {
                 .then((() => {
                     response.json({success: true});
                 }));
+        }));
+    }
+
+    addRecipe(request: Request, response: Response): void {
+        const form = new formidable.IncomingForm();
+        form.uploadDir = uploadPaths.RECIPES;
+        form.keepExtensions = true;
+        form.parse(request, ((error, fields, files) => {
+            const token = get(fields, "token");
+            const userId = this.tokenService.getUserIdByToken(token as string);
+            const name = get(fields, "name");
+            const description = get(fields, "description");
+            const ingredients = get(fields, "ingredients");
+            const oldPath = this.getFilePath(files);
+            const recipeName = this.generateName();
+            const newPath = `${uploadPaths.RECIPES}/${recipeName}.${this.getExtension(oldPath)}`;
+            const item = {
+                userId,
+                name,
+                description,
+                ingredients,
+                logo: `${recipeName}.${this.getExtension(oldPath)}`
+            };
+            fs.renameSync(oldPath, newPath);
+            this.recipeModel.create(item).then(() => {
+                response.json({success: true});
+            });
         }));
     }
 

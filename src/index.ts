@@ -8,6 +8,7 @@ import { Redis } from "./service/Redis";
 import { EApiPaths, mediaPath } from "./config";
 import { category, user, email, login, code, password } from "./routes";
 import { avatar } from "./routes/avatar";
+import { recipe } from "./routes/recipe";
 
 const app = express();
 const server = http.createServer(app);
@@ -36,6 +37,7 @@ app.use(EApiPaths.LOGIN, login);
 app.use(EApiPaths.CODE, code);
 app.use(EApiPaths.PASSWORD, password);
 app.use(EApiPaths.AVATAR, avatar);
+app.use(EApiPaths.RECIPE, recipe);
 
 server.listen(process.env.PORT, () => {
     console.log("Server connected on", process.env.PORT);
